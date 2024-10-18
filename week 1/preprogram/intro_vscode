@@ -31,14 +31,9 @@ In case u have no idea on what to write: `print("Hello World")` """
 # like this: 
 # %%
 
-
-"""-------------------------- Week 1 -----------------------------------
-After learning the concept of classes. Let's make a class yourself
-In the code below, we want to:
-    - create a class Person that takes 2 arguments
-        - with attribute: name, age
-        - with method: jump
-    - create an object of class Person
+"""-------------------------- Week 1 Preparation (Optional) -----------------------------------
+If you do not know what class && object is, let's go over it  https://www.w3schools.com/python/python_classes.asp
+and try to answer some questions below
 
 Code below are the given template
 """
@@ -73,6 +68,3 @@ uncomment the code you think correctly call method
 """
 # p1.jump()
 # p1.jump
-
-
-# %%
