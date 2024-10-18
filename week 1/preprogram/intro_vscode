@@ -1,0 +1,78 @@
+""" Hi everone, welcome to VSCode
+VSCode is a lightweight IDE where you can write code, run code, organize ur code
+Let's learn how to run Python code in VSCode. 
+BTW we assume you have followed the setup instructions and installed Python interpreter, VSCode, and Plug-in in VSCode
+If not, let's do it now!
+"""
+
+"""VSCode provide interactive way to run Python code. We will go over 2 ways
+First thing is definitely have a python file, so create a python file by file_name_you_luv.py
+Have some code in file_name_you_luv.py you just created. 
+In case u have no idea on what to write: `print("Hello World")` """
+
+""" Method 1: use Run button
+1. go into the file in VSCode
+2. u can run python file by clicking the Run button on the top right of the window. it looks like ▷ 
+    Now on the terminal, your program runs
+3. pull out more options by clicking the pull-out button on the right of the run button.
+4. click "Run Current File in Interactive Window"
+5. now you should find another window appeared -- interactive window
+    you can code and press 'Enter' in the prompt box in the interactive window
+"""
+
+"""Method 2: run code in a cell
+1. write "# %%" in the file you create
+    VSCode automatically know it's a Python cell
+2. write code in the Python cell
+3. click "Run Cell" on the block
+    or "Shift + Enter" to run the cell
+"""
+
+# like this: 
+# %%
+
+
+"""-------------------------- Week 1 -----------------------------------
+After learning the concept of classes. Let's make a class yourself
+In the code below, we want to:
+    - create a class Person that takes 2 arguments
+        - with attribute: name, age
+        - with method: jump
+    - create an object of class Person
+
+Code below are the given template
+"""
+
+class Person:
+    def __init__(self) -> None:
+        """
+        Q: When does the code run this method?
+        A: 
+        """
+        pass # this is a placeholder
+
+    def jump(self):
+        print("I jumped!")
+
+""" 
+let's create an object of class Person
+how would u do it? Uncomment the one you think is correct
+"""
+# p1 = Person
+# p1 = Person()
+
+"""
+uncomment the code below to check the data type of p1
+Q: why would the each line above give u different result?
+A: 
+"""
+# type(p1)
+
+"""
+uncomment the code you think correctly call method
+"""
+# p1.jump()
+# p1.jump
+
+
+# %%
