@@ -5,6 +5,7 @@ from gameboard import GamePanel
 # Define a new event for the snake's automatic movement
 MOVE_EVENT = pygame.USEREVENT + 1
 
+MODE = "auto"  # Set the mode to "auto" for automatic snake movement
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -13,10 +14,10 @@ def main():
     clock = pygame.time.Clock()
     running = True
     score = 0  # Initial score
-    game_panel = GamePanel(screen)
+    game_panel = GamePanel(screen, MODE)
 
     # Set up a timer to trigger MOVE_EVENT every 1000 milliseconds (1 second)
-    pygame.time.set_timer(MOVE_EVENT, 1000)
+    pygame.time.set_timer(MOVE_EVENT, 100)
 
     while running:
         for event in pygame.event.get():

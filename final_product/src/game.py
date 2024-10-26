@@ -1,9 +1,11 @@
 from setting import NUM_ROWS, NUM_COLS
 import random
+import heapq
 
 class ArrayGameBoard:
     grid: list[list[int]]
     is_game_over: bool
+    apples: list[tuple[int, int]]
     def __init__(self, num_rows=NUM_ROWS, num_cols=NUM_COLS):
         # Initialize the 2D array representing the gameboard
         self.grid = [[0] * NUM_COLS for _ in range(NUM_ROWS)]
@@ -20,6 +22,7 @@ class ArrayGameBoard:
             'left': (0, -1),
             'right': (0, 1)
         }
+        self.apples = []
         self.place_apple()
         self.place_apple()
         self.is_game_over = False
@@ -30,6 +33,7 @@ class ArrayGameBoard:
             col = random.randint(0, NUM_COLS - 1)
             if self.grid[row][col] == 0:  # Ensure it's an empty cell
                 self.grid[row][col] = 2  # Place an apple
+                self.apples.append((row, col))
                 break
         
 
@@ -52,6 +56,7 @@ class ArrayGameBoard:
             if self.grid[new_head[0]][new_head[1]] == 2: # hit an apple
                 # Eat the apple and grow the snake (do not remove tail)
                 self.grid[new_head[0]][new_head[1]] = 1 
+                self.apples.remove(new_head)
                 self.place_apple()  # Place a new apple
             elif self.grid[new_head[0]][new_head[1]] == 1: # hit snake itself
                 self.is_game_over = True
@@ -72,3 +77,52 @@ class ArrayGameBoard:
     
     def get_score(self):
         return len(self.snake_body) - 1
+
+    def __str__(self) -> str:
+        res = ""
+        for row in self.grid:
+            for cell in row:
+                if cell == 0:
+                    res += "_ "
+                else:
+                    res += str(cell) + " "
+            res += "\n"
+        return res
+        
+    def manhattan_distance(self, pos1, pos2):
+        """Calculate Manhattan distance between two positions."""
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+    
+    def greedy_best_first_search(self):
+        """Perform one-move horizon Greedy Best-First Search to get the next move direction."""
+        
+        # Priority queue to store possible moves
+        priority_queue = []
+        head = self.snake_body[0]  # Current position of the snake's head
+
+        # Check all four possible directions
+        for direction, (row_change, col_change) in self.directions.items():
+            new_head = (head[0] + row_change, head[1] + col_change)
+
+            # Check if the new position is within bounds and not a collision with the snake's body
+            if 0 <= new_head[0] < NUM_ROWS and 0 <= new_head[1] < NUM_COLS and self.grid[new_head[0]][new_head[1]] != 1:
+                # Calculate the Manhattan distance to the apple
+                for apple in self.apples:
+                    distance = self.manhattan_distance(new_head, apple)
+                    heapq.heappush(priority_queue, (distance, direction))
+
+        # Get the best move based on the closest Manhattan distance
+        if priority_queue:
+            _, best_direction = heapq.heappop(priority_queue)
+            self.move(best_direction)
+        else: # no way to go
+            self.is_game_over = True
+
+if __name__=="__main__":
+    game = ArrayGameBoard()
+    print(game)
+    while (not game.is_game_over):
+        game.greedy_best_first_search()
+        print(game)
+        print(game.get_score())
+        print(game.is_game_over)

@@ -7,7 +7,10 @@ FONT = pygame.font.Font(None, 36)  # Default font, size 36
 
 class GameBoard:
     gameboard: ArrayGameBoard
-    def __init__(self, surface):
+    
+    def __init__(self, surface, mode = "human"):
+        print(f"GameBoard mode: {mode}")
+        self.mode = mode
         self.surface = surface
         self.gameboard = ArrayGameBoard(NUM_ROWS, NUM_COLS)  # Get the initial gameboard state
 
@@ -33,7 +36,7 @@ class GameBoard:
     def draw(self):
         """Draws the gameboard with beige background, grid lines, and black border."""
         pygame.draw.rect(self.surface, BEIGE, self.rect) # beige background
-        pygame.draw.rect(self.surface, BLACK, self.rect, 2) # black border
+        pygame.draw.rect(self.surface, BLACK, self.rect, 3) # black border
 
         # use self.gameboard to draw the grid
         for row in range(NUM_ROWS):
@@ -51,7 +54,10 @@ class GameBoard:
 
     def update(self, move: str):
         """Updates the gameboard based on the move."""
-        self.gameboard.move(move)
+        if self.mode == "human":
+            self.gameboard.move(move)
+        elif self.mode == "auto":
+            self.gameboard.greedy_best_first_search()
     
     def is_game_over_state(self):
         """Returns True if the game is over."""
@@ -75,9 +81,11 @@ class RestartButton:
         return self.rect.collidepoint(mouse_pos)
     
 class GamePanel:
-    def __init__(self, surface):
+    def __init__(self, surface, mode = "human"):
+        self.mode = mode # human or auto
         self.surface = surface
-        self.gameboard = GameBoard(surface)  # Create an instance of GameBoard
+        print(f"GamePanel mode: {self.mode}")
+        self.gameboard = GameBoard(surface, mode)  # Create an instance of GameBoard
         self.restart_button = RestartButton(surface)
 
     def update(self, event: str):
