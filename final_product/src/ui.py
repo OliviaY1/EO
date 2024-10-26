@@ -1,6 +1,6 @@
 import pygame
 from setting import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, RED, BLACK, GRAY, BEIGE, LIGHT_BLUE, GRID_SIZE, SCOREBOARD_HEIGHT, MARGIN, NUM_COLS, NUM_ROWS, GRID_WIDTH, GRID_HEIGHT
-from game import ArrayGameBoard
+from array import ArrayGameBoard
 
 pygame.font.init()
 FONT = pygame.font.Font(None, 36)  # Default font, size 36
@@ -9,7 +9,6 @@ class GameBoard:
     gameboard: ArrayGameBoard
     
     def __init__(self, surface, mode = "human"):
-        print(f"GameBoard mode: {mode}")
         self.mode = mode
         self.surface = surface
         self.gameboard = ArrayGameBoard(NUM_ROWS, NUM_COLS)  # Get the initial gameboard state
@@ -57,11 +56,16 @@ class GameBoard:
         if self.mode == "human":
             self.gameboard.move(move)
         elif self.mode == "auto":
-            self.gameboard.greedy_best_first_search()
+            ai_move = self.gameboard.greedy_best_first_search()
+            self.gameboard.move(ai_move)
     
-    def is_game_over_state(self):
+    def is_game_over(self):
         """Returns True if the game is over."""
         return self.gameboard.is_game_over
+    
+    def get_score(self):
+        """Returns the current score."""
+        return self.gameboard.get_score()
 
 
 class RestartButton:
@@ -81,53 +85,19 @@ class RestartButton:
         return self.rect.collidepoint(mouse_pos)
     
 class GamePanel:
-    def __init__(self, surface, mode = "human"):
-        self.mode = mode # human or auto
+    def __init__(self, surface):
         self.surface = surface
-        print(f"GamePanel mode: {self.mode}")
-        self.gameboard = GameBoard(surface, mode)  # Create an instance of GameBoard
-        self.restart_button = RestartButton(surface)
 
-    def update(self, event: str):
-        """Updates the UI based on the gameboard state from ArrayGameBoard."""
-        self.gameboard.update(event)
-
-    def _draw_game_over(self):
-        """Draws the Game Over message on the screen."""
-        game_over_font = pygame.font.Font(None, 100)  # Larger font for Game Over
-        game_over_text = game_over_font.render('GAME OVER', True, BLACK)
-        
-        # Center the text on the gameboard
-        text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
-        self.surface.blit(game_over_text, text_rect)
-
-    def draw(self):
+    def draw(self, score: int):
         """Draws the game panel, which includes the gameboard, score, and restart button."""
         # Fill the entire screen with light blue background
         self.surface.fill(LIGHT_BLUE)
 
-        # Draw the GameBoard
-        self.gameboard.draw()
-
-        if self.gameboard.is_game_over_state():
-                self._draw_game_over()
-
         # Draw the score
-        self.draw_score(self.gameboard.gameboard.get_score())
+        self._draw_score(score)
 
-        # Draw the Restart Button
-        self.restart_button.draw()
-
-    def draw_score(self, score):
+    def _draw_score(self, score):
         """Draws the score at the bottom of the screen."""
         score_text = FONT.render(f'SCORE: {score}', True, BLACK)
         self.surface.blit(score_text, (20, SCREEN_HEIGHT - SCOREBOARD_HEIGHT + 30))
     
-    def is_game_over_state(self):
-        """Returns True if the game is over."""
-        return self.gameboard.is_game_over_state()
-
-    def restart(self):
-        # reset score
-        # reset gameboard
-        self.gameboard = GameBoard(self.surface)
