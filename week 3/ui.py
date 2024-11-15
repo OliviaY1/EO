@@ -2,7 +2,6 @@ import pygame
 from setting import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, RED, BLACK, GRAY, BEIGE, LIGHT_BLUE, GRID_SIZE, SCOREBOARD_HEIGHT, MARGIN, NUM_COLS, NUM_ROWS, GRID_WIDTH, GRID_HEIGHT
 from array_class import ArrayGameBoard
 
-
 pygame.font.init()
 FONT = pygame.font.Font(None, 36)  # Default font, size 36, 
 
@@ -27,7 +26,7 @@ class GameBoard:
         self.rect = pygame.Rect(self.margin_width, self.margin_height, self.width, self.height)  # Game area dimensions
 
         # load apple's image
-        self.apple_image = pygame.image.load('final_product/assets/apple.png')
+        self.apple_image = pygame.image.load('week 3/apple.png') # tell pygame where the img is
         self.apple_image = pygame.transform.scale(self.apple_image, (self.grid_length, self.grid_length))
 
     def array_to_pixel(self, row, col):
@@ -40,27 +39,35 @@ class GameBoard:
 
     def draw(self):
         """Draws the gameboard with beige background, grid lines, and black border."""
-        pygame.draw.rect(self.surface, BEIGE, self.rect)
         # TODO: Draw the self.rect on self.surface with BEIGE color
+        pygame.draw.rect(self.surface, BEIGE, self.rect)
         # TODO: Draw the self.rect's black borders
+        pygame.draw.rect(self.surface, BLACK, self.rect, width=1)
 
         # use self.gameboard to draw the grid
+        # we can obtain 2d array of the game by self.gameboard.get_grid()
+        # we can obtain a grid's size by self.grid_length. 
         for row in range(NUM_ROWS):
             for col in range(NUM_COLS):
                 # TODO: given (row, col), find its pixel coordinates on self.surface
+                # (1, 1) -> (100, 200 pixel)
+                coord_x, coord_y = self.array_to_pixel(row, col)
                 # TODO: create a rect to represent the grid (row, col) on the canvas, knowing its size is (self.grid_length * self.grid_length
-
+                # fill the blank with coord_x, coord_y, self.grid_length
+                grid_rect = pygame.Rect((coord_x, coord_y), (self.grid_length, self.grid_length)) # rect = pygame.Rect(..., ..., ..., ...) 
                 # TODO: draw the rect on self.surface. Its color depends on the if this grid represents an apple / snake body / nothing
                 # HINT: use self.gameboard.get_grid()
-                if self.gameboard.get_grid()[row][col] == 1:
-                    # TODO: what to do?
-                    ...
-                elif self.gameboard.get_grid()[row][col] == 0:
-                    ...
-                elif self.gameboard.get_grid()[row][col] == 2:
+                if self.gameboard.get_grid()[row][col] == 1: # snake
+                    # TODO: draw rect on self.surface with black, filled
+                    pygame.draw.rect(self.surface, BLACK, grid_rect)
+                elif self.gameboard.get_grid()[row][col] == 0: # empty 
+                    # TODO: draw rect on self.surface with black border, not filled
+                    pygame.draw.rect(self.surface, GRAY, grid_rect, width=1)
+                elif self.gameboard.get_grid()[row][col] == 2: # apple
                     # pygame.draw.rect(self.surface, RED, grid_rect)
                     # TODO: use blit on self.surface to project the image of self.apple_image on this position
-                    ...
+                    self.surface.blit(self.apple_image, grid_rect)
+
 
     def update(self, move: str):
         """Given a move (such as "up", "down"), updates the gameboard"""
@@ -87,8 +94,12 @@ class RestartButton:
         # TODO: draw self.rect on self.surface
         pygame.draw.rect(self.surface, BEIGE, self.rect)
         # TODO: draw self.rect's black border on self.surface. Adjust the border thickness
+        pygame.draw.rect(self.surface, BLACK, self.rect, width = 2)
         # TODO: render a font with string "RESTART" on the screen, choose color you like
         # TODO: use blit on self.surface so that the font shows
+        restart_text = FONT.render(f"RESTART", True, BLACK)
+        self.surface.blit(restart_text, (SCREEN_WIDTH - 160, SCREEN_HEIGHT - SCOREBOARD_HEIGHT + 30))
+        
         
 
     def is_clicked(self, mouse_pos):
@@ -105,13 +116,14 @@ class GamePanel:
     def draw(self, score: int):
         """Draws the game panel, which includes the gameboard, score, and restart button."""
         # TODO: Fill self.surface with color LIGHT_BLUE
+        self.surface.fill(LIGHT_BLUE)
         # TODO: use _draw_score() to draw the score on the self.surface
-        ...
+        self._draw_score(score)
 
     def _draw_score(self, score):
         """Draws the score at the bottom of the screen."""
         # TODO: put the text you want into FONT.render
-        score_text = FONT.render("placeholder", True, BLACK)
+        score_text = FONT.render(f"Score: {score}", True, BLACK)
         self.surface.blit(score_text, (20, SCREEN_HEIGHT - SCOREBOARD_HEIGHT + 30))
     
 if __name__=="__main__":
@@ -136,12 +148,16 @@ if __name__=="__main__":
                 # TODO: when the key is clicked, What to do!
                 # HINT: use game_board.update()
                 if event.key == pygame.K_UP:
+                    game_board.update("up")
                     print("up clicked")
                 elif event.key == pygame.K_DOWN:
+                    game_board.update("down")
                     print("down clicked")
                 elif event.key == pygame.K_LEFT:
+                    game_board.update("left")
                     print("left clicked")
                 elif event.key == pygame.K_RIGHT:
+                    game_board.update("right")
                     print("right clicked")
         # TODO: the order of game_panel, game_board matters. Try to swtich the order and see what may happen!
         game_panel.draw(game_board.get_score())

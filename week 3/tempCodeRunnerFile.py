@@ -1,1 +1,1 @@
-face.blit(FONT.render("resta
+rint("up clicked")
